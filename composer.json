@@ -1,0 +1,27 @@
+{
+    "name": "crysalead/dir",
+    "description": "Recursive directory scanner to locate directories and/or files in a file system",
+    "keywords": ["File System", "Directory Scanner", "Directory", "File"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Crysalead"
+        }
+    ],
+    "require": {
+        "php": ">=5.4"
+    },
+    "require-dev": {
+        "crysalead/kahlan": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "dir\\": "src/",
+            "dir\\spec\\": "spec/"
+        }
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "minimum-stability": "dev"
+}
