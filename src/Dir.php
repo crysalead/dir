@@ -114,7 +114,6 @@ class Dir extends \FilterIterator
      *                                -`'followSymlinks'` _boolean_     : Follows Symlinks if `true`.
      *                                -`'recursive'`      _boolean_     : Scans recursively if `true`.
      * @return array
-     * @throws Exception
      */
     public static function remove($path, $options = [])
     {
@@ -215,20 +214,28 @@ class Dir extends \FilterIterator
     /**
      * Creates a directory.
      *
-     * @param  string  $path    The directory path.
-     * @param  array   $options Possible options values are:
-     *                           -`'mode'`      _integer_ : Mode used for directory creation.
-     *                           -`'recursive'` _boolean_ : Scans recursively if `true`.
+     * @param  array|string $path    The directory path.
+     * @param  array        $options Possible options values are:
+     *                               -`'mode'`      _integer_ : Mode used for directory creation.
+     *                               -`'recursive'` _boolean_ : Scans recursively if `true`.
      * @return boolean
      */
-    public static function make($path = null, $options = []) {
+    public static function make($path, $options = []) {
         $defaults = [
             'mode'           => 0755,
             'recursive'      => true
         ];
         $options += $defaults;
 
-        return mkdir($path, $options['mode'], $options['recursive']);
+        if (!is_array($path)) {
+            return mkdir($path, $options['mode'], $options['recursive']);
+        }
+
+        $result = [];
+        foreach ($path as $p) {
+            $result[] = static::make($p, $options);
+        }
+        return !!array_filter($result);
     }
 
     /**

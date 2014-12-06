@@ -284,6 +284,21 @@ describe("Dir", function() {
 
         });
 
+        it("creates multiple nested directories in a single call", function() {
+
+            $paths = [
+                $this->tmpDir . '/my/nested/directory',
+                $this->tmpDir . '/sub/nested/directory'
+            ];
+            $actual = Dir::make($paths);
+            expect($actual)->toBe(true);
+
+            foreach ($paths as $path) {
+                expect(file_exists($path))->toBe(true);
+            }
+
+        });
+
     });
 
     describe("::tempnam()", function() {
