@@ -6,6 +6,17 @@ use Exception;
 
 describe("Dir", function() {
 
+    $this->normalise = function($path) {
+        if (!is_array($path)) {
+            return str_replace('/', DIRECTORY_SEPARATOR, $path);
+        }
+        $result = [];
+        foreach ($path as $p) {
+            $result[] = $this->normalise($p);
+        }
+        return $result;
+    };
+
     describe("::scan()", function() {
 
         $sort = function($files) {
@@ -23,7 +34,7 @@ describe("Dir", function() {
                 'type' => 'file',
                 'recursive' => false
             ]);
-            expect($files)->toBe(['spec/fixture/file1.txt']);
+            expect($files)->toBe($this->normalise(['spec/fixture/file1.txt']));
 
         });
 
@@ -34,13 +45,13 @@ describe("Dir", function() {
                 'recursive' => false
             ]);
 
-            expect($sort($files))->toBe($sort([
+            expect($sort($files))->toBe($sort($this->normalise([
                 'spec/fixture/.',
                 'spec/fixture/..',
                 'spec/fixture/file1.txt',
                 'spec/fixture/nested',
                 'spec/fixture/extensions'
-            ]));
+            ])));
 
         });
 
@@ -51,12 +62,12 @@ describe("Dir", function() {
                 'recursive' => false
             ]);
 
-            expect($sort($files))->toBe([
+            expect($sort($files))->toBe($this->normalise([
                 'spec/fixture/extensions/childs',
                 'spec/fixture/extensions/file.xml',
                 'spec/fixture/extensions/index.html',
                 'spec/fixture/extensions/index.php'
-            ]);
+            ]));
 
         });
 
@@ -66,11 +77,11 @@ describe("Dir", function() {
                 'type' => 'file'
             ]);
 
-            expect($sort($files))->toBe([
+            expect($sort($files))->toBe($this->normalise([
                 'spec/fixture/nested/childs/child1.txt',
                 'spec/fixture/nested/nested_file1.txt',
                 'spec/fixture/nested/nested_file2.txt'
-            ]);
+            ]));
 
         });
 
@@ -78,12 +89,12 @@ describe("Dir", function() {
 
             $files = Dir::scan($this->path . DIRECTORY_SEPARATOR . 'nested');
 
-            expect($sort($files))->toBe([
+            expect($sort($files))->toBe($this->normalise([
                 'spec/fixture/nested/childs',
                 'spec/fixture/nested/childs/child1.txt',
                 'spec/fixture/nested/nested_file1.txt',
                 'spec/fixture/nested/nested_file2.txt'
-            ]);
+            ]));
 
         });
 
@@ -93,11 +104,11 @@ describe("Dir", function() {
                 'leavesOnly' => true
             ]);
 
-            expect($sort($files))->toBe([
+            expect($sort($files))->toBe($this->normalise([
                 'spec/fixture/nested/childs/child1.txt',
                 'spec/fixture/nested/nested_file1.txt',
                 'spec/fixture/nested/nested_file2.txt'
-            ]);
+            ]));
 
         });
 
@@ -108,13 +119,13 @@ describe("Dir", function() {
                 'type' => 'file'
             ]);
 
-            expect($sort($files))->toBe([
+            expect($sort($files))->toBe($this->normalise([
                 'spec/fixture/extensions/childs/child1.txt',
                 'spec/fixture/file1.txt',
                 'spec/fixture/nested/childs/child1.txt',
                 'spec/fixture/nested/nested_file1.txt',
                 'spec/fixture/nested/nested_file2.txt'
-            ]);
+            ]));
 
         });
 
@@ -126,10 +137,10 @@ describe("Dir", function() {
                 'type' => 'file'
             ]);
 
-            expect($sort($files))->toBe([
+            expect($sort($files))->toBe($this->normalise([
                 'spec/fixture/extensions/childs/child1.txt',
                 'spec/fixture/file1.txt'
-            ]);
+            ]));
 
         });
 
@@ -152,7 +163,7 @@ describe("Dir", function() {
                 'exclude' => '*nested*',
                 'type' => 'file'
             ]);
-            expect($files)->toBe(['spec/fixture/file1.txt']);
+            expect($files)->toBe($this->normalise(['spec/fixture/file1.txt']));
 
         });
 
@@ -189,7 +200,7 @@ describe("Dir", function() {
 
             foreach ($paths as $path) {
                 $target = preg_replace('~^spec~', '', $path);
-                if ($target === '/fixture/extensions/childs/child1.txt') {
+                if ($target === $this->normalise('/fixture/extensions/childs/child1.txt')) {
                     expect(file_exists($this->tmpDir . $target))->toBe(false);
                 } else {
                     expect(file_exists($this->tmpDir . $target))->toBe(true);
