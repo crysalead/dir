@@ -32,18 +32,18 @@ class Dir extends \FilterIterator
     protected $_types = [];
 
     /**
-     * Scans a given directory for files.
+     * Scans one or many directories for files.
      *
-     * @param  array|string  $path    Path or paths to scan.
-     * @param  array         $options Scanning options. Possible values are:
-     *                                -`'iterator'`       _integer_     : The iterator mode.
-     *                                -`'skipDots'`       _boolean_     : Keeps '.' and '..' if `true`.
-     *                                -`'leavesOnly'`     _boolean_     : Keeps only leaves if `true`.
-     *                                -`'followSymlinks'` _boolean_     : Follows Symlinks if `true`.
-     *                                -`'recursive'`      _boolean_     : Scans recursively if `true`.
-     *                                -`'include'`        _string|array_: An array of includes.
-     *                                -`'exclude'`        _string|array_: An array of excludes.
-     *                                -`'type'`           _string|array_: An array of types.
+     * @param  array|string $path    Path or paths to scan.
+     * @param  array        $options Scanning options. Possible values are:
+     *                               -`'iterator'`       _integer_     : The iterator mode.
+     *                               -`'skipDots'`       _boolean_     : Keeps '.' and '..' if `true`.
+     *                               -`'leavesOnly'`     _boolean_     : Keeps only leaves if `true`.
+     *                               -`'followSymlinks'` _boolean_     : Follows Symlinks if `true`.
+     *                               -`'recursive'`      _boolean_     : Scans recursively if `true`.
+     *                               -`'include'`        _string|array_: An array of includes.
+     *                               -`'exclude'`        _string|array_: An array of excludes.
+     *                               -`'type'`           _string|array_: An array of types.
      * @return array
      * @throws Exception
      */
@@ -70,6 +70,21 @@ class Dir extends \FilterIterator
         return $result;
     }
 
+    /**
+     * Scans a given directory for files.
+     *
+     * @param  string    $path    Path or paths to scan.
+     * @param  array     $options Scanning options. Possible values are:
+     *                            -`'iterator'`       _integer_     : The iterator mode.
+     *                            -`'skipDots'`       _boolean_     : Keeps '.' and '..' if `true`.
+     *                            -`'leavesOnly'`     _boolean_     : Keeps only leaves if `true`.
+     *                            -`'followSymlinks'` _boolean_     : Follows Symlinks if `true`.
+     *                            -`'recursive'`      _boolean_     : Scans recursively if `true`.
+     *                            -`'include'`        _string|array_: An array of includes.
+     *                            -`'exclude'`        _string|array_: An array of excludes.
+     *                            -`'type'`           _string|array_: An array of types.
+     * @return array
+     */
     protected static function _scan($path, $options, $dirFlags, $iteratorFlags)
     {
         if (!file_exists($path)) {
@@ -92,12 +107,28 @@ class Dir extends \FilterIterator
         return $result;
     }
 
+    /**
+     * Returns `RecursiveIteratorIterator` flags from `Dir` options.
+     *
+     * @param  array   $options Scanning options. Possible values are:
+     *                          -`'iterator'`   _integer_ : The iterator mode.
+     *                          -`'leavesOnly'` _boolean_ : Keeps only leaves if `true`.
+     * @return integer          Some `RecursiveIteratorIterator` flags
+     */
     public static function _iteratorFlags($options)
     {
         $flag = $options['leavesOnly'] ? RecursiveIteratorIterator::LEAVES_ONLY : $options['iterator'];
         return $flag;
     }
 
+    /**
+     * Returns `FilesystemIterator` flags from `Dir` options.
+     *
+     * @param  array   $options Scanning options. Possible values are:
+     *                          -`'skipDots'`       _boolean_ : Keeps '.' and '..' if `true`.
+     *                          -`'followSymlinks'` _boolean_ : Follows Symlinks if `true`.
+     * @return integer          Some `FilesystemIterator` flags
+     */
     public static function _dirFlags($options)
     {
         $flag = $options['followSymlinks'] ? FilesystemIterator::FOLLOW_SYMLINKS : 0;
@@ -107,13 +138,12 @@ class Dir extends \FilterIterator
     }
 
     /**
-     * Removes a directory.
+     * Removes one or many directories.
      *
      * @param  array|string  $path    Path or paths to scan.
      * @param  array         $options Scanning options. Possible values are:
      *                                -`'followSymlinks'` _boolean_     : Follows Symlinks if `true`.
      *                                -`'recursive'`      _boolean_     : Scans recursively if `true`.
-     * @return array
      */
     public static function remove($path, $options = [])
     {
@@ -220,7 +250,8 @@ class Dir extends \FilterIterator
      *                               -`'recursive'` _boolean_ : Scans recursively if `true`.
      * @return boolean
      */
-    public static function make($path, $options = []) {
+    public static function make($path, $options = [])
+    {
         $defaults = [
             'mode'           => 0755,
             'recursive'      => true
@@ -247,7 +278,8 @@ class Dir extends \FilterIterator
      * @param  string $prefix The prefix of the generated temporary filename.
      * @return string
      */
-    public static function tempnam($path = null, $prefix = '') {
+    public static function tempnam($path = null, $prefix = '')
+    {
         if ($path === null) {
             $path = sys_get_temp_dir();
         }
