@@ -84,7 +84,12 @@ class Dir extends \FilterIterator
         }
         $filter = new static($worker);
         $filter->filter($options);
-        return array_keys(iterator_to_array($filter));
+
+        $result = [];
+        foreach ($filter as $key => $value) {
+            $result[] = $key;
+        }
+        return $result;
     }
 
     public static function _iteratorFlags($options)
