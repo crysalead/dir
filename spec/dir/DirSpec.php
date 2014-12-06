@@ -244,6 +244,48 @@ describe("Dir", function() {
 
     });
 
+    describe("::make()", function() {
+
+        beforeEach(function() {
+            $this->umask = umask(0);
+            $this->tmpDir = Dir::tempnam(sys_get_temp_dir(), 'spec');
+        });
+
+        afterEach(function() {
+            Dir::remove($this->tmpDir, ['recursive' => true]);
+            umask($this->umask);
+        });
+
+        it("creates a nested directory", function() {
+
+            $path = $this->tmpDir . '/my/nested/directory';
+            $actual = Dir::make($path);
+            expect($actual)->toBe(true);
+
+            expect(file_exists($path))->toBe(true);
+
+            $stat = stat($path);
+            $mode = $stat['mode'] & 0777;
+            expect($mode)->toBe(0755);
+
+        });
+
+        it("creates a nested directory with a specific mode", function() {
+
+            $path = $this->tmpDir . '/my/nested/directory';
+            $actual = Dir::make($path, ['mode' => 0777]);
+            expect($actual)->toBe(true);
+
+            expect(file_exists($path))->toBe(true);
+
+            $stat = stat($path);
+            $mode = $stat['mode'] & 0777;
+            expect($mode)->toBe(0777);
+
+        });
+
+    });
+
     describe("::tempnam()", function() {
 
         it("uses the system temp directory by default", function() {

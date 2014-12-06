@@ -213,20 +213,39 @@ class Dir extends \FilterIterator
     }
 
     /**
-     * Creates a directory with unique file name
+     * Creates a directory.
+     *
+     * @param  string  $path    The directory path.
+     * @param  array   $options Possible options values are:
+     *                           -`'mode'`      _integer_ : Mode used for directory creation.
+     *                           -`'recursive'` _boolean_ : Scans recursively if `true`.
+     * @return boolean
+     */
+    public static function make($path = null, $options = []) {
+        $defaults = [
+            'mode'           => 0755,
+            'recursive'      => true
+        ];
+        $options += $defaults;
+
+        return mkdir($path, $options['mode'], $options['recursive']);
+    }
+
+    /**
+     * Creates a directory with unique file name.
      *
      * @see http://php.net/manual/en/function.tempnam.php
      *
-     * @param  string $dir    The directory where the temporary filename will be created.
+     * @param  string $path   The directory where the temporary filename will be created.
      * @param  string $prefix The prefix of the generated temporary filename.
      * @return string
      */
-    public static function tempnam($dir = null, $prefix = '') {
-        if ($dir === null) {
-            $dir = sys_get_temp_dir();
+    public static function tempnam($path = null, $prefix = '') {
+        if ($path === null) {
+            $path = sys_get_temp_dir();
         }
 
-        if ($tempfile = tempnam($dir, $prefix)) {
+        if ($tempfile = tempnam($path, $prefix)) {
             unlink($tempfile);
             mkdir($tempfile);
         }
