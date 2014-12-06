@@ -234,9 +234,9 @@ class Dir extends \FilterIterator
         foreach ($paths as $path) {
             $target = preg_replace('~^' . $root . '~', '', $path);
             if (is_dir($path)) {
-                mkdir($dest . DIRECTORY_SEPARATOR . ltrim($target, $ds), $options['mode'], true);
+                mkdir($dest . $ds . ltrim($target, $ds), $options['mode'], true);
             } else {
-                copy($path, $dest . DIRECTORY_SEPARATOR . ltrim($target, $ds));
+                copy($path, $dest . $ds . ltrim($target, $ds));
             }
         }
     }
