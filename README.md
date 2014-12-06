@@ -28,7 +28,7 @@ $files = Dir::scan('my/dir',       // Can be a string path of an array of string
 Copies a directory with files recursively into a destination folder.
 
 ```php
-$files = Dir::copy('my/dir',       // Can be a string path of an array of string paths
+$files = Dir::copy('my/dir',       // A string path of an array of string paths
     'my/destination',              // A destination path (string only)
     [
         'mode'           => 0755,  // Mode used for directory creation
@@ -45,10 +45,23 @@ $files = Dir::copy('my/dir',       // Can be a string path of an array of string
 Removes a directory and all its content recursively.
 
 ```php
-$files = Dir::remove('my/dir',     // Can be a string path of an array of string paths
+Dir::remove('my/dir',     // Can be a string path of an array of string paths
     [
         'followSymlinks' => false, // Follows Symlinks
         'recursive'      => true   // Scans recursively
+    ]
+);
+```
+
+## `Dir::make()`
+
+Makes nested directories.
+
+```php
+$success = Dir::make('my/dir',  // Can be a string path of an array of string paths
+    [
+        'mode'      => 0755, // Mode used for directory creation
+        'recursive' => true  // Scans recursively
     ]
 );
 ```
@@ -58,5 +71,5 @@ $files = Dir::remove('my/dir',     // Can be a string path of an array of string
 Creates a temporary folder (like the `tempnam()` function but for directories).
 
 ```php
-$files = Dir::tempnam(sys_get_temp_dir(), 'mytmp');
+$dir = Dir::tempnam(sys_get_temp_dir(), 'mytmp');
 ```
