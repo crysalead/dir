@@ -1,5 +1,5 @@
 <?php
-namespace dir\spec;
+namespace dir\spec\suite;
 
 use dir\Dir;
 use Exception;
