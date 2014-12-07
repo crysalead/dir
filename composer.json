@@ -3,11 +3,6 @@
     "description": "Recursive directory scanner to locate directories and/or files in a file system",
     "keywords": ["File System", "Directory Scanner", "Directory", "File"],
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Crysalead"
-        }
-    ],
     "require": {
         "php": ">=5.4"
     },
