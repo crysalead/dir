@@ -1,6 +1,7 @@
 # Dir - Directory Scanner
 
-[![Build Status](https://travis-ci.org/crysalead/dir.png?branch=master)](https://travis-ci.org/crysalead/dir) [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/crysalead/dir/badges/quality-score.png?s=1ef861497b4e3394b8141160e5f3907e45ea2149)](https://scrutinizer-ci.com/g/crysalead/dir/) [![Code Coverage](https://scrutinizer-ci.com/g/crysalead/dir/badges/coverage.png?s=ef6f07deaccac56d0f4c1591fc99761fed854461)](https://scrutinizer-ci.com/g/crysalead/dir/)
+[![Build Status](https://travis-ci.org/crysalead/dir.svg?branch=master)](https://travis-ci.org/crysalead/dir)
+[![Code Coverage](https://scrutinizer-ci.com/g/crysalead/dir/badges/coverage.png?s=ef6f07deaccac56d0f4c1591fc99761fed854461)](https://scrutinizer-ci.com/g/crysalead/dir/)
 
 Dir is a small library which allows to perform some recursive operations on directories.
 
