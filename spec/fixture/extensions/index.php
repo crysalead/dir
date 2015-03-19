@@ -1,5 +1,5 @@
 <html>
-	<body>
-		<?php echo "Hello World!"; ?>
-	</body>
+  <body>
+    <?php echo "Hello World!"; ?>
+  </body>
 </body>

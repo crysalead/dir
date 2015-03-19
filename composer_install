@@ -1,0 +1,7 @@
+#!/usr/bin/env php
+<?php
+
+$kahlan = 'https://raw.githubusercontent.com/crysalead/kahlan/master/composer.json';
+$dirVersion = json_decode(file_get_contents($kahlan), true)['require']['crysalead/dir'];
+
+`COMPOSER_ROOT_VERSION={$dirVersion} composer install`;
