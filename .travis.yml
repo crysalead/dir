@@ -1,19 +1,19 @@
+sudo: false
 language: php
 
 php:
-  - 5.4
   - 5.5
   - 5.6
+  - 7.0
   - hhvm
-  - hhvm-nightly
 
 matrix:
   allow_failures:
-    - php: hhvm
-    - php: hhvm-nightly
+    - php: 7.0
   fast_finish: true
 
 before_script:
+  - composer config -g github-oauth.github.com $GITHUB_COMPOSER_AUTH
   - composer self-update && ./composer_install
   - if [[ $TRAVIS_PHP_VERSION =~ ^hhvm ]]; then echo 'xdebug.enable = On' >> /etc/hhvm/php.ini; fi
 
@@ -22,3 +22,7 @@ script: bin/kahlan --coverage=3 --clover=clover.xml
 after_success:
   - "if [ $(phpenv version-name) = '5.6' ]; then wget https://scrutinizer-ci.com/ocular.phar; fi"
   - "if [ $(phpenv version-name) = '5.6' ]; then php ocular.phar code-coverage:upload --format=php-clover 'clover.xml'; fi"
+
+env:
+  global:
+  - secure: HhKMBo6wA1/4pMAtY/Iz4ukFhYtH3wP76akUwbBe6lnK2JOjU+Su0ISRIhQhget7fX5OtHq2TOKA7fcA5A9dU+qs7x7S0sY+InuRtpiGBpBICPc1bM0l1TZ2j8D1thAnYAR2QGbd/NPp4NH1XgykTcYN8oVK5f9mKMqXkhu6UPM=
