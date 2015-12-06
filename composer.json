@@ -7,20 +7,19 @@
         "php": ">=5.4"
     },
     "require-dev": {
-        "crysalead/kahlan": "dev-master"
+        "crysalead/kahlan": "~2.0"
     },
     "autoload": {
         "psr-4": {
-            "dir\\": "src/"
+            "Lead\\Dir\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "dir\\spec\\": "spec/"
+            "Lead\\Dir\\Spec\\": "spec/"
         }
     },
     "config": {
         "bin-dir": "bin"
-    },
-    "minimum-stability": "dev"
+    }
 }

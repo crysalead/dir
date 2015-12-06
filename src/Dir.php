@@ -1,5 +1,5 @@
 <?php
-namespace dir;
+namespace Lead\Dir;
 
 use Exception;
 use DirectoryIterator;
