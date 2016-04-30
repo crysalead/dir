@@ -32,14 +32,19 @@ Copies a directory with files recursively into a destination folder.
 $files = Dir::copy('my/dir',       // A string path of an array of string paths
     'my/destination',              // A destination path (string only)
     [
-        'mode'           => 0755,  // Mode used for directory creation
-        'childsOnly'     => false, // Copies the file inside 'my/dir' if `true`, otherwise `dir` will be
-                                   // added as the root directory.
-        'followSymlinks' => true,  // Follows Symlinks
-        'recursive'      => true   // Scans recursively
+        'mode'               => 0755,  // Mode used for directory creation
+        'childsOnly'         => false, // Copies the file inside 'my/dir' if `true`, otherwise `dir` will be
+                                       // added as the root directory.
+        'followSymlinks'     => true,  // Follows Symlinks
+        'recursive'          => true,  // Scans recursively
+        'fileCopiedCallback' => {callable},
+        'dirCopiedCallback'  => {callable},
     ]
 );
 ```
+
+If callbacks are passed in, the appropriate callback is called after copying a
+file or directory.  The final path of the item is passed to the callback.
 
 ## `Dir::remove()`
 

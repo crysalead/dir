@@ -173,12 +173,13 @@ class Dir extends \FilterIterator
      * @param  array|string  $path    Source directory.
      * @param  string        $dest    Destination directory.
      * @param  array         $options Scanning options. Possible values are:
-     *                                -`'mode'`           _integer_     : Mode used for directory creation.
-     *                                -`'childsOnly'`     _boolean_     : Excludes parent directory if `true`.
-     *                                -`'followSymlinks'` _boolean_     : Follows Symlinks if `true`.
-     *                                -`'recursive'`      _boolean_     : Scans recursively if `true`.
+     *                                -`'mode'`               _integer_  : Mode used for directory creation.
+     *                                -`'childsOnly'`         _boolean_  : Excludes parent directory if `true`.
+     *                                -`'followSymlinks'`     _boolean_  : Follows Symlinks if `true`.
+     *                                -`'recursive'`          _boolean_  : Scans recursively if `true`.
+     *                                -`'fileCopiedCallback'` _callable_ : Callback to run after copying a file passing the copied path.
+     *                                -`'dirCopiedCallback'`  _callable_ : Callback to run after copying a directory passing the copied path.
      * @return array
-     * @throws Exception
      */
     public static function copy($path, $dest, $options = [])
     {
@@ -214,12 +215,14 @@ class Dir extends \FilterIterator
      * @param  string    $path Source directory.
      * @param  string    $dest Destination directory.
      * @param  array     $options Scanning options. Possible values are:
-     *                            -`'mode'`           _integer_     : Mode used for directory creation.
-     *                            -`'childsOnly'`     _boolean_     : Excludes parent directory if `true`.
-     *                            -`'followSymlinks'` _boolean_     : Follows Symlinks if `true`.
-     *                            -`'recursive'`      _boolean_     : Scans recursively if `true`.
-     *                            -`'include'`        _string|array_: An array of includes.
-     *                            -`'exclude'`        _string|array_: An array of excludes.
+     *                            -`'mode'`               _integer_      : Mode used for directory creation.
+     *                            -`'childsOnly'`         _boolean_      : Excludes parent directory if `true`.
+     *                            -`'followSymlinks'`     _boolean_      : Follows Symlinks if `true`.
+     *                            -`'recursive'`          _boolean_      : Scans recursively if `true`.
+     *                            -`'include'`            _string|array_ : An array of includes.
+     *                            -`'exclude'`            _string|array_ : An array of excludes.
+     *                            -`'fileCopiedCallback'` _callable_     : Callback to run after copying a file passing the copied path.
+     *                            -`'dirCopiedCallback'`  _callable_     : Callback to run after copying a directory passing the copied path.
      * @return array
      * @throws Exception
      */
@@ -234,9 +237,21 @@ class Dir extends \FilterIterator
         foreach ($paths as $path) {
             $target = preg_replace('~^' . $root . '~', '', $path);
             if (is_dir($path)) {
-                mkdir($dest . $ds . ltrim($target, $ds), $options['mode'], true);
+                $destPath = $dest . $ds . ltrim($target, $ds);
+                mkdir($destPath, $options['mode'], true);
+
+                // Perform callback if provided
+                if (isset($options['dirCopiedCallback']) && is_callable($options['dirCopiedCallback'])) {
+                    call_user_func($options['dirCopiedCallback'], $destPath);
+                }
             } else {
-                copy($path, $dest . $ds . ltrim($target, $ds));
+                $destPath = $dest . $ds . ltrim($target, $ds);
+                copy($path, $destPath);
+
+                // Perform callback if provided
+                if (isset($options['fileCopiedCallback']) && is_callable($options['fileCopiedCallback'])) {
+                    call_user_func($options['fileCopiedCallback'], $destPath);
+                }
             }
         }
     }
