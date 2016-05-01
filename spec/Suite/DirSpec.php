@@ -192,6 +192,27 @@ describe("Dir", function() {
 
         });
 
+        it("copies a directory using a custom copy handler", function() {
+
+            Dir::copy('spec/Fixture', $this->tmpDir, [
+                'copyHandler' => function($path, $target) {
+                    copy($path, $target . '.bak');
+                }
+            ]);
+
+            $paths = Dir::scan('spec/Fixture');
+
+            foreach ($paths as $path) {
+                $target = preg_replace('~^spec~', '', $path);
+                if (is_dir($path)) {
+                    expect(file_exists($this->tmpDir . $target))->toBe(true);
+                } else {
+                    expect(file_exists($this->tmpDir . $target . '.bak'))->toBe(true);
+                }
+            }
+
+        });
+
         it("copies a directory recursively respecting the include option", function() {
 
             Dir::copy('spec/Fixture', $this->tmpDir, ['include' => '*.txt']);

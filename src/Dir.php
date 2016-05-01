@@ -208,6 +208,9 @@ class Dir extends \FilterIterator
             'mode'           => 0755,
             'childsOnly'     => false,
             'followSymlinks' => true,
+            'copyHandler'    => function($path, $target) {
+                copy($path, $target);
+            },
             'recursive'      => true
         ];
         $options += $defaults;
@@ -251,6 +254,8 @@ class Dir extends \FilterIterator
 
         $paths = static::scan($path, $options);
 
+        $copyHandler = $options['copyHandler'];
+
         foreach ($paths as $path) {
             $target = preg_replace('~^' . $root . '~', '', $path);
             if (is_dir($path)) {
@@ -260,7 +265,7 @@ class Dir extends \FilterIterator
                 if (!file_exists(dirname($target))) {
                     mkdir(dirname($target), $options['mode'], true);
                 }
-                copy($path, $target);
+                $copyHandler($path, $target);
             }
         }
     }
