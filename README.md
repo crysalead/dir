@@ -19,7 +19,10 @@ $files = Dir::scan('my/dir',       // Can be a string path of an array of string
         'skipDots'       => true,  // Keeps '.' and '..' directories in result
         'leavesOnly'     => true,  // Keeps only leaves
         'followSymlinks' => true,  // Follows Symlinks
-        'recursive'      => true   // Scans recursively
+        'recursive'      => true   // Scans recursively,
+        'copyHandler'    => function($path, $target) { // The copy handler
+            copy($path, $target);
+        }
     ]
 );
 ```
@@ -48,8 +51,10 @@ Removes a directory and all its content recursively.
 ```php
 Dir::remove('my/dir',     // Can be a string path of an array of string paths
     [
-        'followSymlinks' => false, // Follows Symlinks
-        'recursive'      => true   // Scans recursively
+        'followSymlinks' => false,        // Follows Symlinks
+        'recursive'      => true,         // Scans recursively
+        'include'        => '*.txt',      // Can be an array of includes
+        'exclude'        => '*.save.txt', // Can be an array of excludes
     ]
 );
 ```
@@ -61,8 +66,10 @@ Makes nested directories.
 ```php
 $success = Dir::make('my/dir',  // Can be a string path of an array of string paths
     [
-        'mode'      => 0755, // Mode used for directory creation
-        'recursive' => true  // Scans recursively
+        'mode'      => 0755,         // Mode used for directory creation
+        'recursive' => true,         // Scans recursively
+        'include'   => '*.txt',      // Can be an array of includes
+        'exclude'   => '*.save.txt', // Can be an array of excludes
     ]
 );
 ```
