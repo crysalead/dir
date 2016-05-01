@@ -144,6 +144,8 @@ class Dir extends \FilterIterator
      * @param  array         $options Scanning options. Possible values are:
      *                                -`'followSymlinks'` _boolean_     : Follows Symlinks if `true`.
      *                                -`'recursive'`      _boolean_     : Scans recursively if `true`.
+     *                                -`'include'`        _string|array_: An array of includes.
+     *                                -`'exclude'`        _string|array_: An array of excludes.
      */
     public static function remove($path, $options = [])
     {
@@ -157,13 +159,31 @@ class Dir extends \FilterIterator
         $options['skipDots'] = true;
         $options['leavesOnly'] = false;
         $options['iterator'] = RecursiveIteratorIterator::CHILD_FIRST;
-        unset($options['include']);
-        unset($options['exclude']);
 
-        $paths = array_merge(static::scan($path, $options), (array) $path);
+        try {
+            $paths = array_merge(static::scan($path, $options), (array) $path);
+        } catch (Exception $e) {
+            return true;
+        }
+
+        $isDirEmpty = function($path) {
+            $handle = opendir($path);
+            while (($entry = readdir($handle)) !== false) {
+                if ($entry !== '.' && $entry !== '..') {
+                    return false;
+                }
+            }
+            return true;
+        };
 
         foreach ($paths as $path) {
-            is_dir($path) ? rmdir($path) : unlink($path);
+            if (is_dir($path)) {
+                if ($isDirEmpty($path)) {
+                    rmdir($path);
+                }
+            } else {
+                unlink($path);
+            }
         }
     }
 
@@ -177,6 +197,8 @@ class Dir extends \FilterIterator
      *                                -`'childsOnly'`     _boolean_     : Excludes parent directory if `true`.
      *                                -`'followSymlinks'` _boolean_     : Follows Symlinks if `true`.
      *                                -`'recursive'`      _boolean_     : Scans recursively if `true`.
+     *                                -`'include'`        _string|array_: An array of includes.
+     *                                -`'exclude'`        _string|array_: An array of excludes.
      * @return array
      * @throws Exception
      */
@@ -194,8 +216,6 @@ class Dir extends \FilterIterator
         $options['skipDots'] = true;
         $options['leavesOnly'] = false;
         $options['iterator'] = RecursiveIteratorIterator::SELF_FIRST;
-        unset($options['include']);
-        unset($options['exclude']);
 
         $sources = (array) $path;
 
@@ -236,7 +256,11 @@ class Dir extends \FilterIterator
             if (is_dir($path)) {
                 mkdir($dest . $ds . ltrim($target, $ds), $options['mode'], true);
             } else {
-                copy($path, $dest . $ds . ltrim($target, $ds));
+                $target = $dest . $ds . ltrim($target, $ds);
+                if (!file_exists(dirname($target))) {
+                    mkdir(dirname($target), $options['mode'], true);
+                }
+                copy($path, $target);
             }
         }
     }

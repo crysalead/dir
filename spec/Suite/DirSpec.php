@@ -192,6 +192,42 @@ describe("Dir", function() {
 
         });
 
+        it("copies a directory recursively respecting the include option", function() {
+
+            Dir::copy('spec/Fixture', $this->tmpDir, ['include' => '*.txt']);
+
+            $files = Dir::scan($this->tmpDir, [
+                'type' => 'file'
+            ]);
+
+            sort($files);
+            expect($files)->toBe($this->normalize([
+                $this->tmpDir . '/Fixture/Extensions/Childs/child1.txt',
+                $this->tmpDir . '/Fixture/Nested/Childs/child1.txt',
+                $this->tmpDir . '/Fixture/Nested/nested_file1.txt',
+                $this->tmpDir . '/Fixture/Nested/nested_file2.txt',
+                $this->tmpDir . '/Fixture/file1.txt'
+            ]));
+
+        });
+
+        it("copies a directory recursively respecting the exclude option", function() {
+
+            Dir::copy('spec/Fixture', $this->tmpDir, ['exclude' => '*.txt']);
+
+            $files = Dir::scan($this->tmpDir, [
+                'type' => 'file'
+            ]);
+
+            sort($files);
+            expect($files)->toBe($this->normalize([
+                $this->tmpDir . '/Fixture/Extensions/file.xml',
+                $this->tmpDir . '/Fixture/Extensions/index.html',
+                $this->tmpDir . '/Fixture/Extensions/index.php'
+            ]));
+
+        });
+
         it("copies a directory recursively but not following symlinks", function() {
 
             Dir::copy('spec/Fixture', $this->tmpDir, ['followSymlinks' => false]);
@@ -223,9 +259,15 @@ describe("Dir", function() {
 
     describe("::remove()", function() {
 
-        it("removes a directory recursively", function() {
-
+        beforeEach(function() {
             $this->tmpDir = Dir::tempnam(sys_get_temp_dir(), 'spec');
+        });
+
+        afterEach(function() {
+            Dir::remove($this->tmpDir);
+        });
+
+        it("removes a directory recursively", function() {
 
             Dir::copy('spec/Fixture', $this->tmpDir);
 
@@ -242,6 +284,47 @@ describe("Dir", function() {
 
         });
 
+        it("removes a directory recursively respecting the include option", function() {
+
+            Dir::copy('spec/Fixture', $this->tmpDir);
+
+            Dir::remove($this->tmpDir, ['include' => '*.txt']);
+
+            $files = Dir::scan($this->tmpDir, [
+                'type' => 'file'
+            ]);
+
+            sort($files);
+            expect($files)->toBe($this->normalize([
+                $this->tmpDir . '/Fixture/Extensions/file.xml',
+                $this->tmpDir . '/Fixture/Extensions/index.html',
+                $this->tmpDir . '/Fixture/Extensions/index.php'
+            ]));
+
+
+        });
+
+        it("removes a directory recursively respecting the exclude option", function() {
+
+            Dir::copy('spec/Fixture', $this->tmpDir);
+
+            Dir::remove($this->tmpDir, ['exclude' => '*.txt']);
+
+            $files = Dir::scan($this->tmpDir, [
+                'type' => 'file'
+            ]);
+
+            sort($files);
+            expect($files)->toBe($this->normalize([
+                $this->tmpDir . '/Fixture/Extensions/Childs/child1.txt',
+                $this->tmpDir . '/Fixture/Nested/Childs/child1.txt',
+                $this->tmpDir . '/Fixture/Nested/nested_file1.txt',
+                $this->tmpDir . '/Fixture/Nested/nested_file2.txt',
+                $this->tmpDir . '/Fixture/file1.txt'
+            ]));
+
+        });
+
     });
 
     describe("::make()", function() {
@@ -252,7 +335,7 @@ describe("Dir", function() {
         });
 
         afterEach(function() {
-            Dir::remove($this->tmpDir, ['recursive' => true]);
+            Dir::remove($this->tmpDir);
             umask($this->umask);
         });
 
