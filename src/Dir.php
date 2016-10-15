@@ -194,7 +194,7 @@ class Dir extends \FilterIterator
      * @param  string        $dest    Destination directory.
      * @param  array         $options Scanning options. Possible values are:
      *                                -`'mode'`           _integer_     : Mode used for directory creation.
-     *                                -`'childsOnly'`     _boolean_     : Excludes parent directory if `true`.
+     *                                -`'childrenOnly'`   _boolean_     : Excludes parent directory if `true`.
      *                                -`'followSymlinks'` _boolean_     : Follows Symlinks if `true`.
      *                                -`'recursive'`      _boolean_     : Scans recursively if `true`.
      *                                -`'include'`        _string|array_: An array of includes.
@@ -206,7 +206,7 @@ class Dir extends \FilterIterator
     {
         $defaults = [
             'mode'           => 0755,
-            'childsOnly'     => false,
+            'childrenOnly'   => false,
             'followSymlinks' => true,
             'copyHandler'    => function($path, $target) {
                 copy($path, $target);
@@ -234,11 +234,11 @@ class Dir extends \FilterIterator
     /**
      * Copies a directory.
      *
-     * @param  string    $path Source directory.
-     * @param  string    $dest Destination directory.
+     * @param  string    $path    Source directory.
+     * @param  string    $dest    Destination directory.
      * @param  array     $options Scanning options. Possible values are:
      *                            -`'mode'`           _integer_     : Mode used for directory creation.
-     *                            -`'childsOnly'`     _boolean_     : Excludes parent directory if `true`.
+     *                            -`'childrenOnly'`   _boolean_     : Excludes parent directory if `true`.
      *                            -`'followSymlinks'` _boolean_     : Follows Symlinks if `true`.
      *                            -`'recursive'`      _boolean_     : Scans recursively if `true`.
      *                            -`'include'`        _string|array_: An array of includes.
@@ -249,23 +249,21 @@ class Dir extends \FilterIterator
     protected static function _copy($path, $dest, $options)
     {
         $ds = DIRECTORY_SEPARATOR;
-        $root = $options['childsOnly'] ? $path : dirname($path);
+        $root = $options['childrenOnly'] ? $path : dirname($path);
         $dest = rtrim($dest, $ds);
 
         $paths = static::scan($path, $options);
-
         $copyHandler = $options['copyHandler'];
 
         foreach ($paths as $path) {
-            $target = preg_replace('~^' . $root . '~', '', $path);
-            if (is_dir($path)) {
-                mkdir($dest . $ds . ltrim($target, $ds), $options['mode'], true);
-            } else {
-                $target = $dest . $ds . ltrim($target, $ds);
-                if (!file_exists(dirname($target))) {
-                    mkdir(dirname($target), $options['mode'], true);
-                }
-                $copyHandler($path, $target);
+            $target = preg_replace('~^' . preg_quote(rtrim($root, $ds)) . '~', '', $path);
+            $isDir = is_dir($path);
+            $dirname = $dest . $ds . ltrim($isDir ? $target : dirname($target), $ds);
+            if (!file_exists($dirname)) {
+                mkdir($dirname, $options['mode'], true);
+            }
+            if (!$isDir) {
+                $copyHandler($path, $dest . $ds . ltrim($target, $ds));
             }
         }
     }
@@ -366,7 +364,7 @@ class Dir extends \FilterIterator
      */
     protected function _excluded($path)
     {
-        foreach($this->_exclude as $exclude) {
+        foreach ($this->_exclude as $exclude) {
             if (fnmatch($exclude, $path)) {
                 return true;
             }
@@ -381,7 +379,7 @@ class Dir extends \FilterIterator
      */
     protected function _included($path)
     {
-        foreach($this->_include as $include) {
+        foreach ($this->_include as $include) {
             if (fnmatch($include, $path)) {
                 return true;
             }
