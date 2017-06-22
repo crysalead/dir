@@ -36,7 +36,7 @@ $files = Dir::copy('my/dir',       // A string path of an array of string paths
     'my/destination',              // A destination path (string only)
     [
         'mode'           => 0755,  // Mode used for directory creation
-        'childsOnly'     => false, // Copies the file inside 'my/dir' if `true`, otherwise `dir` will be
+        'childrenOnly'   => false, // Copies the file inside 'my/dir' if `true`, otherwise `dir` will be
                                    // added as the root directory.
         'followSymlinks' => true,  // Follows Symlinks
         'recursive'      => true   // Scans recursively
