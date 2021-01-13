@@ -13,7 +13,7 @@ before_script:
   - if [[ $TRAVIS_SECURE_ENV_VARS = "true" ]]; then composer config -g github-oauth.github.com $GITHUB_COMPOSER_AUTH; fi
   - composer install --no-interaction
 
-script: bin/kahlan --coverage=3 --clover=clover.xml
+script: if [ $(phpenv version-name) = '7.4' ]; then bin/kahlan --coverage=3 --clover=clover.xml; else bin/kahlan; fi
 
 after_success:
   - "if [ $(phpenv version-name) = '7.4' ]; then wget https://scrutinizer-ci.com/ocular.phar; fi"
