@@ -345,6 +345,7 @@ class Dir extends \FilterIterator
      *
      * @return boolean
      */
+    #[\ReturnTypeWillChange]
     public function accept()
     {
         $path = $this->current()->getPathname();

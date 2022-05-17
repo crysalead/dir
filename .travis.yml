@@ -1,15 +1,12 @@
 language: php
 
 php:
-  - 5.6
-  - 7.0
-  - 7.1
-  - 7.2
-  - 7.3
   - 7.4
+  - 8.1
 
 before_script:
   - if [[ $TRAVIS_SECURE_ENV_VARS = "true" ]]; then composer config -g github-oauth.github.com $GITHUB_COMPOSER_AUTH; fi
+  - echo 'xdebug.mode = coverage' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - composer install --no-interaction
 
 script: bin/kahlan --coverage=3 --clover=clover.xml
@@ -20,4 +17,4 @@ after_success:
 
 env:
   global:
-    - secure: HhKMBo6wA1/4pMAtY/Iz4ukFhYtH3wP76akUwbBe6lnK2JOjU+Su0ISRIhQhget7fX5OtHq2TOKA7fcA5A9dU+qs7x7S0sY+InuRtpiGBpBICPc1bM0l1TZ2j8D1thAnYAR2QGbd/NPp4NH1XgykTcYN8oVK5f9mKMqXkhu6UPM=
+    - secure: jGue9uTjznTT7Ozzy+3xmk2vDQT8ePJjgR7xODBT9On5pIRkokDFb0krB1NrW6iQOdp9yrUGajw0J5As0QI+rXSdQ4vbfvJ50jblOVPL9Fb+je77wP6NiykJFSC2wrtCq26e7D8M9rit33UIGG3vla8JTROud2I4vQcgQsY5UJM=
